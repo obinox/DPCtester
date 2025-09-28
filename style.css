@@ -1,0 +1,63 @@
+html {
+    background-color: #222;
+    --track-width: 480px;
+    --button-mode: 5;
+}
+.tracks-container {
+    overflow: visible;
+    position: relative;
+    top: 20px;
+    left: 20px;
+    width: var(--track-width);
+}
+.tracks {
+    overflow: visible;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: flex;
+}
+
+.tracks-wide {
+    width: var(--track-width);
+}
+
+.traks-button {
+    width: calc(var(--track-width) / var(--button-mode) * 6);
+}
+
+.button {
+    width: calc(var(--track-width) / var(--button-mode));
+    z-index: 30;
+}
+
+.trigger {
+    width: calc(var(--track-width) / 2);
+    z-index: 20;
+}
+
+.side {
+    width: calc(var(--track-width) / 2);
+    z-index: 10;
+}
+
+.track {
+}
+
+.note {
+    position: absolute;
+    width: inherit;
+}
+
+.note-odd {
+    background-color: lightgray;
+}
+.note-even {
+    background-color: blue;
+}
+.note-trigger {
+    background-color: red;
+}
+.note-side {
+    background-color: cyan;
+}

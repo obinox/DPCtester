@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <title>DPCtester</title>
+    </head>
+    <body>
+        <input type="file" id="xmlInput" accept=".xml" onchange="loadXML(this.files[0])" />
+        <script src="main.js"></script>
+        <div id="tracks-container" class="tracks-container">
+            <div id="side" class="tracks tracks-wide">
+                <div id="sideL" class="track side"></div>
+                <div id="sideR" class="track side"></div>
+            </div>
+            <div id="button" class="tracks tracks-button">
+                <div id="button1" class="track button"></div>
+                <div id="button2" class="track button"></div>
+                <div id="button3" class="track button"></div>
+                <div id="button4" class="track button"></div>
+                <div id="button5" class="track button"></div>
+                <div id="button6" class="track button"></div>
+            </div>
+            <div id="trigger" class="tracks tracks-wide">
+                <div id="L1" class="track trigger"></div>
+                <div id="R1" class="track trigger"></div>
+            </div>
+        </div>
+    </body>
+</html>
