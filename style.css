@@ -1,63 +1,121 @@
 html {
     background-color: #222;
-    --track-width: 480px;
-    --button-mode: 5;
-}
-.tracks-container {
-    overflow: visible;
-    position: relative;
-    top: 20px;
-    left: 20px;
-    width: var(--track-width);
-}
-.tracks {
-    overflow: visible;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    display: flex;
+    --button-mode: 4;
+    --player-bar-height: 72px;
+    --text-color: #fff;
+    --player-bar-background: #111;
+    --progress-bar-fill: linear-gradient(to right, #fa3 80%, #ffdd91 100%);
+    --curr-time: 0;
+    --xml-tps: 0;
 }
 
-.tracks-wide {
-    width: var(--track-width);
-}
-
-.traks-button {
-    width: calc(var(--track-width) / var(--button-mode) * 6);
-}
-
-.button {
-    width: calc(var(--track-width) / var(--button-mode));
-    z-index: 30;
-}
-
-.trigger {
-    width: calc(var(--track-width) / 2);
-    z-index: 20;
-}
-
-.side {
-    width: calc(var(--track-width) / 2);
-    z-index: 10;
+body {
+    font-family: "Roboto", "Noto Sans KR", sans-serif;
+    background-color: #121212;
+    color: white;
+    margin: 0;
 }
 
 .track {
+    position: absolute;
+    height: 100%;
+    top: 0;
+}
+
+.left {
+    width: 50%;
+    left: 0;
+}
+.right {
+    width: 50%;
+    right: 0;
+}
+
+.normal {
+    width: calc(100% / min(6, var(--button-mode)));
+}
+#button1 {
+    left: 0;
+}
+#button2 {
+    left: calc(100% / min(6, var(--button-mode)));
+}
+#button3 {
+    left: calc(200% / min(6, var(--button-mode)));
+}
+#button4 {
+    left: calc(300% / min(6, var(--button-mode)));
+}
+#button5 {
+    left: calc(400% / min(6, var(--button-mode)));
+}
+#button6 {
+    left: calc(500% / min(6, var(--button-mode)));
+}
+
+.track[data-type="odd"] > .note {
+    z-index: 33;
+    background: linear-gradient(to bottom right, lightgray, darkgray);
+}
+.track[data-type="even"] > .note {
+    z-index: 33;
+    background: linear-gradient(to bottom right, blue, darkblue);
+}
+.track[data-type="trigger"] > .note {
+    z-index: 32;
+    background: linear-gradient(to bottom right, red, darkred);
+}
+.track[data-type="side"] > .note {
+    z-index: 31;
+    background: linear-gradient(to bottom right, cyan, darkcyan);
+}
+
+#gear {
+    z-index: 10;
+    position: absolute;
+    background-color: #000;
+    height: min(100vh, calc(100vw * 9 / 16));
+    top: max(0%, calc(50vh - 50vw * 9 / 16));
+    opacity: 90%;
+    width: min(calc(30vh / 9 * 16), 30vw);
+    overflow: hidden;
+}
+#gear.center {
+    left: calc(50vw - min(calc(15vh / 9 * 16), 15vw));
+}
+#gear.left {
+    left: 0;
+}
+#gear.right {
+    right: 0;
+}
+
+#tracks {
+    z-index: 20;
+    position: absolute;
+    background-color: transparent;
+    height: 100%;
+    top: 0;
+    width: calc(100% / 30 * 25);
+    left: calc(100% / 12);
+    overflow: hidden;
+}
+
+#judgement {
+    z-index: 20;
+    position: absolute;
+    background-color: yellow;
+    height: 1.5%;
+    top: 68.8%;
+    width: calc(100% / 30 * 25);
+    left: calc(100% / 12);
 }
 
 .note {
+    z-index: 20;
     position: absolute;
-    width: inherit;
-}
-
-.note-odd {
-    background-color: lightgray;
-}
-.note-even {
-    background-color: blue;
-}
-.note-trigger {
-    background-color: red;
-}
-.note-side {
-    background-color: cyan;
+    height: 2.5%;
+    top: 12vw;
+    width: 100%;
+    left: 0;
 }
