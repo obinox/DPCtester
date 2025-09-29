@@ -23,6 +23,9 @@ function loadXML() {
             var track_cnt = null;
             var tps = null;
 
+            var measure = document.getElementById("measure");
+            measure.innerHTML = "";
+
             if (songinfoElement) {
                 tempo = songinfoElement.getAttribute("tempo");
                 tpm = songinfoElement.getAttribute("tpm");
@@ -42,7 +45,16 @@ function loadXML() {
                     track_cnt: track_cnt,
                     tps: tps,
                 });
-                root.style.setProperty("--xml-tps-px", tps + "px");
+
+                root.style.setProperty("--xml-tps", tps);
+
+                const bars = (end_tick - start_tick) / (96 * 16);
+                for (let t = 0; t < bars + 5; t++) {
+                    var dv = document.createElement("div");
+                    dv.className = "bar";
+                    dv.style.top = `calc(var(--curr-time) * var(--tps-const) * var(--note-velocity) * 1px - (${t * 96 * 16}px + var(--judge-tick) * 32px) * var(--tps-const) * var(--note-velocity) / var(--xml-tps) - 1px + var(--gear-height) * var(--judge-coef))`;
+                    measure.appendChild(dv);
+                }
             }
 
             var tempoElement = xmlDoc.querySelector("tempo");
@@ -120,19 +132,19 @@ function loadXML() {
                 console.log("Button Mode:", buttonMode);
             }
             drawNote = (track, name) => {
+                var element = document.getElementById(name);
+                element.innerHTML = "";
                 if (track) {
-                    var element = document.getElementById(name);
-                    element.innerHTML = "";
                     for (var i = 0; i < track.length; i++) {
                         var tick = track[i].tick;
                         var dur = track[i].dur;
                         var dv = document.createElement("div");
                         dv.className = "note";
                         if (dur) {
-                            dv.style.height = `${dur / 1}px`;
-                            dv.style.top = `calc(var(--curr-time) * var(--xml-tps-px) - ${tick / 1}px - ${dur / 1}px + 2.5%)`;
+                            dv.style.height = `calc(${dur}px * var(--tps-const) * var(--note-velocity) / var(--xml-tps))`;
+                            dv.style.top = `calc(var(--curr-time) * var(--tps-const) * var(--note-velocity) * 1px - (${tick - 96 * 16}px + var(--judge-tick) * 32px) * var(--tps-const) * var(--note-velocity) / var(--xml-tps) - ${dur}px * var(--tps-const) * var(--note-velocity) / var(--xml-tps) + var(--note-height) / 2 + var(--gear-height) * var(--judge-coef))`;
                         } else {
-                            dv.style.top = `calc(var(--curr-time) * var(--xml-tps-px) - ${tick / 1}px)`;
+                            dv.style.top = `calc(var(--curr-time) * var(--tps-const) * var(--note-velocity) * 1px - (${tick - 96 * 16}px + var(--judge-tick) * 32px) * var(--tps-const) * var(--note-velocity) / var(--xml-tps) - var(--note-height) / 2 + var(--gear-height) * var(--judge-coef))`;
                         }
                         element.appendChild(dv);
                     }

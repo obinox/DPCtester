@@ -20,7 +20,7 @@ iframe {
     z-index: 40;
     background-color: var(--player-bar-background);
     display: grid;
-    grid-template-columns: 3fr 4fr 3fr;
+    grid-template-columns: 3fr 2fr 3fr;
     grid-template-areas: "start middle end";
     color: var(--text-color);
 }

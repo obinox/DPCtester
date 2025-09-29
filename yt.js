@@ -2,13 +2,11 @@ var tag = document.createElement("script");
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName("script")[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-var root;
 
 let player;
 let progressInterval;
 
 function onYouTubeIframeAPIReady() {
-    root = document.documentElement;
     console.log("YouTube Ready.");
 }
 
@@ -77,7 +75,7 @@ function onPlayerReady(e) {
     });
     updatePlayerInfo();
     clearInterval(progressInterval);
-    progressInterval = setInterval(updatePlayerInfo, 1000 / 60);
+    progressInterval = setInterval(updatePlayerInfo, 1000 / 240);
 }
 
 function onPlayerStateChange(e) {
@@ -147,13 +145,18 @@ window.addEventListener("keydown", (event) => {
     let handled = true;
     switch (event.code) {
         case "Space":
+        case "Escape":
         case "KeyK":
             // play/pause
             const playerState = player.getPlayerState();
             if (playerState === YT.PlayerState.PLAYING) {
                 player.pauseVideo();
             } else {
+                const currentTime = player.getCurrentTime();
+                player.seekTo(currentTime, true);
+                updatePlayerInfo();
                 player.playVideo();
+                updatePlayerInfo();
             }
             break;
         case "KeyJ":

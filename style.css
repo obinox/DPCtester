@@ -7,6 +7,12 @@ html {
     --progress-bar-fill: linear-gradient(to right, #fa3 80%, #ffdd91 100%);
     --curr-time: 0;
     --xml-tps: 0;
+    --bga-opacity: 0;
+    --gear-opacity: 0.9;
+    --tps-const: 30;
+    --note-velocity: 52;
+    --judge-coef: 0.63;
+    --judge-tick: 0;
 }
 
 body {
@@ -14,6 +20,17 @@ body {
     background-color: #121212;
     color: white;
     margin: 0;
+}
+
+#protecter {
+    z-index: 0;
+    background-color: #000;
+    opacity: var(--bga-opacity);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
 }
 
 .track {
@@ -26,31 +43,54 @@ body {
     width: 50%;
     left: 0;
 }
+.left.fake {
+    z-index: 10;
+    background: linear-gradient(to bottom right, red, darkred);
+    top: calc(100% * 16 / 9 / min(6, var(--button-mode)));
+    height: calc(100% * 16 / 27 / min(6, var(--button-mode)));
+}
 .right {
     width: 50%;
     right: 0;
+}
+.right.fake {
+    z-index: 10;
+    background: linear-gradient(to bottom right, red, darkred);
+    top: calc(100% * 16 / 9 / min(6, var(--button-mode)));
+    height: calc(100% * 16 / 27 / min(6, var(--button-mode)));
 }
 
 .normal {
     width: calc(100% / min(6, var(--button-mode)));
 }
-#button1 {
+.normal.fake {
+    z-index: 20;
+    background: linear-gradient(to bottom right, #222, #111);
+    height: calc(100% * 16 / 9 / min(6, var(--button-mode)));
+}
+
+.b1 {
     left: 0;
 }
-#button2 {
+.b2 {
     left: calc(100% / min(6, var(--button-mode)));
 }
-#button3 {
+.b3 {
     left: calc(200% / min(6, var(--button-mode)));
 }
-#button4 {
+.b4 {
     left: calc(300% / min(6, var(--button-mode)));
 }
-#button5 {
+.b5 {
     left: calc(400% / min(6, var(--button-mode)));
 }
-#button6 {
+.b6 {
     left: calc(500% / min(6, var(--button-mode)));
+}
+
+.fake {
+    position: absolute;
+    top: 0;
 }
 
 .track[data-type="odd"] > .note {
@@ -64,6 +104,8 @@ body {
 .track[data-type="trigger"] > .note {
     z-index: 32;
     background: linear-gradient(to bottom right, red, darkred);
+    border-top-left-radius: var(--note-height);
+    border-top-right-radius: var(--note-height);
 }
 .track[data-type="side"] > .note {
     z-index: 31;
@@ -73,10 +115,10 @@ body {
 #gear {
     z-index: 10;
     position: absolute;
-    background-color: #000;
+    background-color: transparent;
     height: min(100vh, calc(100vw * 9 / 16));
+    --gear-height: min(100vh, calc(100vw * 9 / 16));
     top: max(0%, calc(50vh - 50vw * 9 / 16));
-    opacity: 90%;
     width: min(calc(30vh / 9 * 16), 30vw);
     overflow: hidden;
 }
@@ -84,21 +126,22 @@ body {
     left: calc(50vw - min(calc(15vh / 9 * 16), 15vw));
 }
 #gear.left {
-    left: 0;
+    left: max(0px, calc(50vw - 50vh * 16 / 9));
 }
 #gear.right {
-    right: 0;
+    right: max(0px, calc(50vw - 50vh * 16 / 9));
 }
 
 #tracks {
-    z-index: 20;
+    z-index: 30;
     position: absolute;
     background-color: transparent;
-    height: 100%;
+    height: 70%;
     top: 0;
     width: calc(100% / 30 * 25);
     left: calc(100% / 12);
     overflow: hidden;
+    --note-height: min(2.5vh, calc(2.5vw * 9 / 16));
 }
 
 #judgement {
@@ -106,15 +149,72 @@ body {
     position: absolute;
     background-color: yellow;
     height: 1.5%;
-    top: 68.8%;
+    top: 68.5%;
+    width: 100%;
+    left: 0;
+}
+
+#measure {
+    z-index: 15;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    background-color: transparent;
+}
+
+#gearback {
+    z-index: 10;
+    position: absolute;
+    background-color: #111;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: var(--gear-opacity);
+}
+
+#gearbottom {
+    z-index: 50;
+    position: absolute;
+    height: 25%;
     width: calc(100% / 30 * 25);
     left: calc(100% / 12);
+    bottom: 0;
+    background-color: #111;
+}
+#gearleft {
+    z-index: 50;
+    position: absolute;
+    height: 100%;
+    width: calc(100% / 60 * 5);
+    top: 0;
+    left: 0;
+    background-color: #111;
+}
+#gearright {
+    z-index: 50;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    width: calc(100% / 60 * 5);
+    right: 0;
+    background-color: #111;
+}
+
+.bar {
+    z-index: 15;
+    position: absolute;
+    height: 2px;
+    left: 0;
+    width: 100%;
+    background-color: #eee;
 }
 
 .note {
-    z-index: 20;
     position: absolute;
-    height: 2.5%;
+    height: var(--note-height);
     top: 12vw;
     width: 100%;
     left: 0;

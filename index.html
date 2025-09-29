@@ -8,46 +8,43 @@
         <link rel="stylesheet" href="playerbar.css" />
         <link rel="stylesheet" href="selecter.css" />
         <title>DPCtester</title>
-        <script src="main.js"></script>
-        <script src="yt.js"></script>
-        <script src="selecter.js"></script>
-        <script src="loadxml.js"></script>
+        <script src="main.js" defer></script>
+        <script src="yt.js" defer></script>
+        <script src="selecter.js" defer></script>
+        <script src="loadxml.js" defer></script>
     </head>
     <body>
-        <!-- <div id="tracks-container" class="tracks-container">
-            <div id="side" class="tracks tracks-wide">
-                <div id="sideL" class="track side"></div>
-                <div id="sideR" class="track side"></div>
-            </div>
-            <div id="button" class="tracks tracks-button">
-                <div id="button1" class="track button"></div>
-                <div id="button2" class="track button"></div>
-                <div id="button3" class="track button"></div>
-                <div id="button4" class="track button"></div>
-                <div id="button5" class="track button"></div>
-                <div id="button6" class="track button"></div>
-            </div>
-            <div id="trigger" class="tracks tracks-wide">
-                <div id="L1" class="track trigger"></div>
-                <div id="R1" class="track trigger"></div>
-            </div>
-        </div> -->
         <div id="player"></div>
+        <div id="protecter"></div>
         <div id="gear" class="center">
             <div id="tracks">
                 <div id="sideL" class="track left" data-type="side"></div>
                 <div id="sideR" class="track right" data-type="side"></div>
-                <div id="button1" class="track normal" data-type="odd"></div>
-                <div id="button2" class="track normal" data-type="even"></div>
-                <div id="button3" class="track normal" data-type="even"></div>
-                <div id="button4" class="track normal" data-type="odd"></div>
-                <div id="button5" class="track normal" data-type="odd"></div>
-                <div id="button6" class="track normal" data-type="odd"></div>
+                <div id="button1" class="track normal b1" data-type="odd"></div>
+                <div id="button2" class="track normal b2" data-type="even"></div>
+                <div id="button3" class="track normal b3" data-type="even"></div>
+                <div id="button4" class="track normal b4" data-type="odd"></div>
+                <div id="button5" class="track normal b5" data-type="odd"></div>
+                <div id="button6" class="track normal b6" data-type="odd"></div>
                 <div id="L1" class="track left" data-type="trigger"></div>
                 <div id="R1" class="track right" data-type="trigger"></div>
                 <div class="note"></div>
             </div>
+            <div id="measure"></div>
             <div id="judgement"></div>
+            <div id="gearback"></div>
+            <div id="gearbottom">
+                <div id="fake1" class="fake normal b1"></div>
+                <div id="fake2" class="fake normal b2"></div>
+                <div id="fake3" class="fake normal b3"></div>
+                <div id="fake4" class="fake normal b4"></div>
+                <div id="fake5" class="fake normal b5"></div>
+                <div id="fake6" class="fake normal b6"></div>
+                <div id="fakeL" class="fake left"></div>
+                <div id="fakeR" class="fake right"></div>
+            </div>
+            <div id="gearleft"></div>
+            <div id="gearright"></div>
         </div>
 
         <div id="player-bar" class="player-bar">
@@ -67,16 +64,29 @@
                 </button>
                 <input type="range" id="volume-slider" min="0" max="100" value="100" />
                 <span id="time-info">0:00 / 0:00</span>
+                <button id="gear-button" class="control-button text-button" value="center">M</button>
+                <button id="button-mode" class="control-button text-button" value="4">4B</button>
             </div>
             <div id="middle-controls" class="middle-controls controls">
                 <div id="xml-wrapper">
                     <input type="file" id="xml-input" accept=".xml" onchange="loadXML(this.files[0])" />
-                    <label id="xml-label" class="text-button" for="xml-input">파일선택</label>
+                    <label id="xml-label" class="text-button" for="xml-input">XML 파일 선택</label>
                 </div>
             </div>
             <div id="right-controls" class="right-controls controls">
-                <button id="gear-button" class="control-button text-button" value="center">M</button>
-                <button id="button-mode" class="control-button text-button" value="4">4B</button>
+                <div>
+                    <button id="judgeLL" class="control-button text-button" value="52" style="padding-right: 0px; margin-right: 0px; text-align: right">◀</button>
+                    <button id="judgeL" class="control-button text-button" value="52" style="padding-right: 0px; margin-left: 0px; margin-right: 0px; text-align: right; width: 24px">◀</button>
+                    <span id="judge" class="control-button text-button" style="width: 80px">0</span>
+                    <button id="judgeR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; margin-right: 0px; text-align: left; width: 24px">▶</button>
+                    <button id="judgeRR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; text-align: left">▶</button>
+                </div>
+                <div>
+                    <button id="note-velocityL" class="control-button text-button" value="52" style="padding-right: 0px; margin-right: 0px; text-align: right">5</button>
+                    <span class="control-button text-button" style="margin-left: 0px; margin-right: 0px">.</span>
+                    <button id="note-velocityR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; text-align: left">2</button>
+                </div>
+
                 <div id="yt-selector" class="select-wrapper">
                     <div class="select-trigger">
                         <span>곡 선택</span>
@@ -108,33 +118,5 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div id="footer" class="footer">
-            <input type="file" id="xmlInput" accept=".xml" onchange="loadXML(this.files[0])" />
-            <select id="yt-selector" onchange="loadVideoById(this.value)">
-                <option value="">영상 선택</option>
-                <option value="mLn1aiduiaI">File 1</option>
-                <option value="kpw_1LeRlng">File 2</option>
-                <option value="file3.xml">File 3</option>
-            </select>
-            <div class="video-info">
-                <img id="video-thumbnail" src="https://via.placeholder.com/56" alt="thumbnail" />
-                <div>
-                    <span id="video-title" class="title">영상을 로드해주세요.</span>
-                </div>
-            </div>
-            <div class="player-controls">
-                <div class="control-buttons">
-                    <button id="play-pause-btn">▶</button>
-                </div>
-                <div id="progress-bar-container">
-                    <div id="progress-bar"></div>
-                </div>
-            </div>
-            <div class="extra-controls">
-                <span>🔊</span>
-                <input type="range" id="volume-slider" min="0" max="100" value="100" />
-            </div>
-        </div> -->
     </body>
 </html>
