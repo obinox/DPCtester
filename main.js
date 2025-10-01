@@ -562,8 +562,8 @@ function draw() {
 
     drawnotes(rectbars, timeoffest, judgeoffset);
     drawnotes(rectsides, timeoffest, judgeoffset);
-    drawtriggers(recttriggersL, timeoffest, judgeoffset);
-    drawtriggers(recttriggersR, timeoffest, judgeoffset);
+    drawtriggers(recttriggersL, timeoffest, judgeoffset, 0);
+    drawtriggers(recttriggersR, timeoffest, judgeoffset, 1);
     drawnotes(rectnotes, timeoffest, judgeoffset);
     requestAnimationFrame(draw);
 }
