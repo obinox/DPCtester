@@ -52,6 +52,8 @@ var ms = 0;
 var track_cnt = 0;
 var tps = 0;
 
+const tickntempo = [];
+
 const canvnotes = [];
 const canvbars = [];
 var currtime = 0;
@@ -280,24 +282,25 @@ function loadXML() {
                 }
             }
 
-            // var tempoElement = xmlDoc.querySelector("tempo");
-            // var tempos = null;
-            // if (tempoElement) {
-            //     tempos = tempoElement.querySelectorAll("tempo");
-            //     console.log("Tempo Count:", tempos.length);
-            //     for (var i = 0; i < tempos.length; i++) {
-            //         var t = tempos.item(i);
-            //         var tick = t.getAttribute("tick");
-            //         var tempo = t.getAttribute("tempo");
-            //         var tps = t.getAttribute("tps");
-            //         //same
-            //         console.log("Tempo " + (i + 1) + ":", {
-            //             tick: tick,
-            //             tempo: tempo,
-            //             tps: tps,
-            //         });
-            //     }
-            // }
+            var tempoElement = xmlDoc.querySelector("tempo");
+            var tempos = null;
+            tickntempo.length = 0;
+            if (tempoElement) {
+                tempos = tempoElement.querySelectorAll("tempo");
+                console.log("Tempo Count:", tempos.length);
+                for (var i = 0; i < tempos.length; i++) {
+                    var t = tempos.item(i);
+                    var tick = t.getAttribute("tick");
+                    var tempo = t.getAttribute("tempo");
+                    var tps = t.getAttribute("tps");
+                    //same
+                    console.log("Tempo " + (i + 1) + ":", {
+                        tick: tick,
+                        tempo: tempo,
+                        tps: tps,
+                    });
+                }
+            }
 
             var notelistElement = xmlDoc.querySelector("note_list");
             canvnotes.length = 0;
