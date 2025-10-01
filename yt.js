@@ -75,7 +75,7 @@ function onPlayerReady(e) {
     });
     updatePlayerInfo();
     clearInterval(progressInterval);
-    progressInterval = setInterval(updatePlayerInfo, 1000 / 240);
+    progressInterval = setInterval(updatePlayerInfo, 5);
 }
 
 function onPlayerStateChange(e) {
@@ -112,7 +112,6 @@ function updatePlayerInfo() {
     if (player && typeof player.getCurrentTime === "function") {
         const progressBar = document.getElementById("progress-bar");
         const currentTime = player.getCurrentTime();
-        root.style.setProperty("--curr-time", currentTime);
         const duration = player.getDuration();
         const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
         progressBar.style.width = progressPercent + "%";

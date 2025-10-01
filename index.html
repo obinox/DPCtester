@@ -5,28 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script src="https://www.youtube.com/iframe_api"></script>
         <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="./playbar.css" />
         <title>DPCtester</title>
-        <script src="./main.js" defer></script>
-        <script src="./yt.js" defer></script>
     </head>
     <body>
         <div id="player"></div>
         <div id="protecter"></div>
         <div id="gear" class="center">
             <div id="tracks">
-                <div id="sideL" class="track left" data-type="side"></div>
-                <div id="sideR" class="track right" data-type="side"></div>
-                <div id="button1" class="track normal b1" data-type="odd"></div>
-                <div id="button2" class="track normal b2" data-type="even"></div>
-                <div id="button3" class="track normal b3" data-type="even"></div>
-                <div id="button4" class="track normal b4" data-type="odd"></div>
-                <div id="button5" class="track normal b5" data-type="odd"></div>
-                <div id="button6" class="track normal b6" data-type="odd"></div>
-                <div id="L1" class="track left" data-type="trigger"></div>
-                <div id="R1" class="track right" data-type="trigger"></div>
-                <div class="note"></div>
+                <canvas id="canvas" width="100%" height="100%"></canvas>
             </div>
-            <div id="measure"></div>
             <div id="judgement"></div>
             <div id="gearback"></div>
             <div id="gearbottom">
@@ -64,23 +52,26 @@
                 <button id="button-mode" class="control-button text-button" value="4">4B</button>
             </div>
             <div id="middle-controls" class="middle-controls controls">
-                <div id="xml-wrapper">
+                <div id="xml-wrapper" style="max-width: 150px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                     <input type="file" id="xml-input" accept=".xml" onchange="loadXML(this.files[0])" />
-                    <label id="xml-label" class="text-button" for="xml-input">XML 파일 선택</label>
+                    <label id="xml-label" class="text-button" for="xml-input" x>XML 파일 선택</label>
                 </div>
             </div>
             <div id="right-controls" class="right-controls controls">
-                <div>
-                    <button id="judgeLL" class="control-button text-button" value="52" style="padding-right: 0px; margin-right: 0px; text-align: right">◀</button>
-                    <button id="judgeL" class="control-button text-button" value="52" style="padding-right: 0px; margin-left: 0px; margin-right: 0px; text-align: right; width: 24px">◀</button>
-                    <span id="judge" class="control-button text-button" style="width: 80px">0</span>
-                    <button id="judgeR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; margin-right: 0px; text-align: left; width: 24px">▶</button>
-                    <button id="judgeRR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; text-align: left">▶</button>
-                </div>
-                <div>
-                    <button id="note-velocityL" class="control-button text-button" value="52" style="padding-right: 0px; margin-right: 0px; text-align: right">5</button>
-                    <span class="control-button text-button" style="margin-left: 0px; margin-right: 0px">.</span>
-                    <button id="note-velocityR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; text-align: left">2</button>
+                <div style="text-align: center; width: 180px">
+                    <div style="display: inline">
+                        <button id="note-velocityL" class="control-button text-button" value="52" style="padding-right: 0px; margin-right: 0px; text-align: right"></button>
+                        <span id="note-text" class="control-button text-button" style="margin-left: 0px; margin-right: 0px">5.2</span>
+                        <button id="note-velocityR" class="control-button text-button" value="52" style="padding-left: 0px; margin-left: 0px; text-align: left"></button>
+                    </div>
+                    <br />
+                    <div style="display: inline">
+                        <button id="judgeLL" class="control-button text-button" value="52" style="padding: 0px; margin: 0px; text-align: right; width: 12px">◀</button>
+                        <button id="judgeL" class="control-button text-button" value="52" style="padding: 0px; margin: 0px; text-align: right; width: 12px">◀</button>
+                        <span id="judge" class="control-button text-button" style="min-width: 40px">0</span>
+                        <button id="judgeR" class="control-button text-button" value="52" style="padding: 0px; margin: 0px; text-align: left; width: 12px">▶</button>
+                        <button id="judgeRR" class="control-button text-button" value="52" style="padding: 0px; margin: 0px; text-align: left; width: 12px">▶</button>
+                    </div>
                 </div>
 
                 <div id="yt-selector" class="select-wrapper">
@@ -109,10 +100,11 @@
                         <li class="option" data-value="h5hMNF3kDm0">Tic! Tac! Toe!</li>
                         <li class="option" data-value="kJOBUmLyiuE">Winners</li>
                         <li class="option" data-value="OuWUsMTcWSA">Zero-Break</li>
-                        <li class="option" data-value="kpw_1LeRlng">TEST</li>
                     </ul>
                 </div>
             </div>
         </div>
+        <script src="./main.js" defer></script>
+        <script src="./yt.js" defer></script>
     </body>
 </html>
