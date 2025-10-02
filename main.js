@@ -13,6 +13,7 @@ const gearseq = [
 ];
 let velocity = 52;
 let judge = 0;
+var judgeoff = 0;
 
 const root = document.documentElement;
 const modeBtn = document.getElementById("button-mode");
@@ -47,12 +48,14 @@ var tempo = 0;
 var tpm = 0;
 var start_tick = 0;
 var end_tick = 0;
-var tick = 0;
+var total_tick = 0;
 var ms = 0;
 var track_cnt = 0;
 var tps = 0;
 
-const tickntempo = [];
+const ticksegment = [];
+const temposegment = [];
+const tpssegment = [];
 
 const canvnotes = [];
 const canvbars = [];
@@ -255,52 +258,55 @@ function loadXML() {
 
             canvbars.length = 0;
             if (songinfoElement) {
-                tempo = songinfoElement.getAttribute("tempo");
-                tpm = songinfoElement.getAttribute("tpm");
-                start_tick = songinfoElement.getAttribute("start_tick");
-                end_tick = songinfoElement.getAttribute("end_tick");
-                tick = songinfoElement.getAttribute("tick");
-                ms = songinfoElement.getAttribute("ms");
-                track_cnt = songinfoElement.getAttribute("track_cnt");
-                tps = songinfoElement.getAttribute("tps");
+                tempo = parseInt(songinfoElement.getAttribute("tempo"));
+                tpm = parseInt(songinfoElement.getAttribute("tpm"));
+                start_tick = parseInt(songinfoElement.getAttribute("start_tick"));
+                end_tick = parseInt(songinfoElement.getAttribute("end_tick"));
+                total_tick = parseInt(songinfoElement.getAttribute("tick"));
+                ms = parseInt(songinfoElement.getAttribute("ms"));
+                track_cnt = parseInt(songinfoElement.getAttribute("track_cnt"));
+                tps = parseInt(songinfoElement.getAttribute("tps"));
                 console.log("Song Info:", {
                     tempo: tempo,
                     tpm: tpm,
                     start_tick: start_tick,
                     end_tick: end_tick,
-                    tick: tick,
+                    tick: total_tick,
                     ms: ms,
                     track_cnt: track_cnt,
                     tps: tps,
                 });
 
-                root.style.setProperty("--xml-tps", tps);
-                const bars = (end_tick - start_tick) / (96 * 16);
+                const bars = (end_tick - start_tick) / tpm;
 
                 for (let t = 0; t < bars + 5; t++) {
-                    canvbars.push(t);
+                    canvbars.push(t * tpm + start_tick);
                 }
             }
 
-            // var tempoElement = xmlDoc.querySelector("tempo");
-            // var tempos = null;
-            // tickntempo.length = 0;
-            // if (tempoElement) {
-            //     tempos = tempoElement.querySelectorAll("tempo");
-            //     console.log("Tempo Count:", tempos.length);
-            //     for (var i = 0; i < tempos.length; i++) {
-            //         var t = tempos.item(i);
-            //         var tick = t.getAttribute("tick");
-            //         var tempo = t.getAttribute("tempo");
-            //         var tps = t.getAttribute("tps");
-            //         //same
-            //         console.log("Tempo " + (i + 1) + ":", {
-            //             tick: tick,
-            //             tempo: tempo,
-            //             tps: tps,
-            //         });
-            //     }
-            // }
+            var tempoElement = xmlDoc.querySelector("tempo");
+            var tempos = null;
+            temposegment.length = 0;
+            ticksegment.length = 0;
+            tpssegment.length = 0;
+            if (tempoElement) {
+                tempos = tempoElement.querySelectorAll("tempo");
+                console.log("Tempo Count:", tempos.length);
+                for (let i = 0; i < tempos.length; i++) {
+                    const t = tempos.item(i);
+                    var interval_tick = t.getAttribute("tick");
+                    var interval_tempo = t.getAttribute("tempo");
+                    var interval_tps = t.getAttribute("tps");
+                    ticksegment.push(parseInt(interval_tick));
+                    temposegment.push(parseInt(interval_tempo));
+                    tpssegment.push(parseInt(interval_tps));
+                    console.log("Tempo " + (i + 1) + ":", {
+                        tick: interval_tick,
+                        tempo: interval_tempo,
+                        tps: interval_tps,
+                    });
+                }
+            }
 
             var notelistElement = xmlDoc.querySelector("note_list");
             canvnotes.length = 0;
@@ -311,7 +317,7 @@ function loadXML() {
                     var track = note.item(i);
                     var idx = track.getAttribute("idx");
                     var notes = track.querySelectorAll("note");
-                    var name = "";
+                    var name = null;
                     if (idx == 2) {
                         name = "sideL";
                     } else if (idx == 3) {
@@ -333,11 +339,13 @@ function loadXML() {
                     } else if (idx == 11) {
                         name = "triggerR1";
                     }
-                    for (var j = 0; j < notes.length; j++) {
-                        var n = notes.item(j);
-                        var tick = n.getAttribute("tick");
-                        var dur = n.getAttribute("dur");
-                        canvnotes.push({ tick: tick, dur: dur, track: name });
+                    if (name) {
+                        for (var j = 0; j < notes.length; j++) {
+                            const n = notes.item(j);
+                            var tick = n.getAttribute("tick");
+                            var dur = n.getAttribute("dur");
+                            canvnotes.push({ tick: parseInt(tick), dur: dur, track: name });
+                        }
                     }
                 }
             }
@@ -392,13 +400,31 @@ function sampling() {
     recttriggersL.length = 0;
     recttriggersR.length = 0;
 
-    const judgeoff = (judge + 6) * 32;
-    const notecoef = (30 * velocity) / tps;
+    judgeoff = ((10 / 4) * (judge * velocity * canvas.width)) / 480;
+
+    const notecoefs = [];
+    const segsums = [];
+    segsums.push(0);
+
+    for (let i = 0; i < temposegment.length; i++) {
+        notecoefs.push((300 * velocity) / (temposegment[i] * 64));
+    }
+    for (let i = 1; i < ticksegment.length; i++) {
+        segsums.push(segsums[i - 1] + (((ticksegment[i] - ticksegment[i - 1]) * canvas.width) / 480) * notecoefs[i - 1]);
+    }
 
     for (let i = 0; i < canvbars.length; i++) {
         const n = canvbars[i];
-        const barchartpos = (n * (96 * 16) * canvas.width) / 480;
-        const barpos = (barchartpos + judgeoff) * notecoef;
+        var barsegidx = ticksegment.length - 1;
+        for (let j = ticksegment.length - 1; j >= 0; j--) {
+            if (n >= ticksegment[j]) {
+                break;
+            }
+            barsegidx--;
+        }
+        const segpos = segsums[barsegidx];
+        const barchartsegpos = ((n - ticksegment[barsegidx]) * canvas.width) / 480;
+        const barpos = segpos + barchartsegpos * notecoefs[barsegidx];
 
         const nn = [0, barpos, canvas.width, 1, "gray"];
         rectbars.push(nn);
@@ -406,19 +432,28 @@ function sampling() {
 
     for (let i = 0; i < canvnotes.length; i++) {
         const n = canvnotes[i];
-        var fillcolor = "";
-        var trackidx = 0;
 
-        const notechartpos = ((n.tick - 96 * 16) * canvas.width) / 480;
-
-        const notepos = (notechartpos + judgeoff) * notecoef;
+        var notesegidx = ticksegment.length - 1;
+        for (let j = ticksegment.length - 1; j >= 0; j--) {
+            if (n.tick >= ticksegment[j]) {
+                break;
+            }
+            notesegidx--;
+        }
+        const segpos = segsums[notesegidx];
+        const notechartpos = ((n.tick - ticksegment[notesegidx]) * canvas.width) / 480;
+        const notepos = segpos + notechartpos * notecoefs[notesegidx];
 
         var notedur = noteheight;
         var notesize = notewidth;
 
         if (n.dur) {
-            notedur = ((n.dur * canvas.width) / 480) * notecoef;
+            notedur = ((n.dur * canvas.width) / 480) * notecoefs[notesegidx];
         }
+
+        var fillcolor = "";
+        var trackidx = 0;
+
         switch (n.track) {
             case "button1":
                 fillcolor = whitenote;
@@ -560,8 +595,8 @@ function draw() {
     } else {
         currtime = 0;
     }
-    var timeoffest = (currtime * velocity * canvas.width) / 16 + canvas.height;
-    var judgeoffset = 0;
+    const timeoffest = (currtime * velocity * canvas.width) / 16 + canvas.height;
+    const judgeoffset = judgeoff;
 
     drawnotes(rectbars, timeoffest, judgeoffset);
     drawnotes(rectsides, timeoffest, judgeoffset);
