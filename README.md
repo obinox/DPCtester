@@ -1,5 +1,8 @@
 # DPCtester
 
+해당 페이지는 DJMAX RESPECT V의 공식 페이지가 아니며, 리듬 게임 DJMAX RESPECT V의 팬사이트입니다.
+DJMAX RESPECT V은 NEOWIZ의 등록상표입니다.
+
 xml 파일을 시뮬레이션 하기 위해 만들어졌습니다.
 
 https://obinox.github.io/DPCtester
